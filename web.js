@@ -5,14 +5,18 @@ const app = express();
 
 // --- Security Layer ---
 app.use((req, res, next) => {
-  const auth = req.headers.authorization;
+  const authHeader = req.headers.authorization;
+  const authQuery = req.query.auth;
   const token = `Bearer ${process.env.ACCESS_TOKEN}`;
-  if (auth !== token) {
-    console.log("🚫 Unauthorized request blocked");
-    return res.status(403).send("Forbidden");
+  const validToken = process.env.ACCESS_TOKEN;
+  
+  if (authHeader === token || authQuery === validToken) {
+    return next();
   }
-  next();
+  console.log("🚫 Unauthorized request blocked");
+  return res.status(403).send("Forbidden");
 });
+
 // -----------------------
 
 // Health check
