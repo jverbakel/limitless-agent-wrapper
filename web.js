@@ -3,16 +3,16 @@ import fetch from "node-fetch";
 
 const app = express();
 
-// --- Security Layer ---
+// --- Security Layer (Query or Header) ---
 app.use((req, res, next) => {
   const authHeader = req.headers.authorization;
   const authQuery = req.query.auth;
-  const token = `Bearer ${process.env.ACCESS_TOKEN}`;
-  const validToken = process.env.ACCESS_TOKEN;
-  
-  if (authHeader === token || authQuery === validToken) {
+  const token = process.env.ACCESS_TOKEN;
+
+  if (authHeader === `Bearer ${token}` || authQuery === token) {
     return next();
   }
+
   console.log("🚫 Unauthorized request blocked");
   return res.status(403).send("Forbidden");
 });
